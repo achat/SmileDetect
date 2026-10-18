@@ -3,6 +3,7 @@ package com.smiley;
 import nu.pattern.OpenCV;
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
+import org.opencv.videoio.Videoio;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -161,15 +162,20 @@ public final class SmileyApp extends JFrame {
         @Override
         protected Void doInBackground() throws Exception {
             OpenCV.loadLocally();
-            try (EmotionAnalyzer analyzer = new EmotionAnalyzer(MODEL_PATH, CASCADE_PATH)) {
-                VideoCapture capture = new VideoCapture();
-                Mat frame = new Mat();
-                try {
-                    if (!capture.open(0)) {
-                        publish(new FrameUpdate(null, EmotionAnalyzer.Expression.NEUTRAL,
-                                "Could not open camera. Check that it is connected and available.", false));
-                        return null;
-                    }
+            VideoCapture capture = new VideoCapture();
+            Mat frame = new Mat();
+            try {
+                if (!openCamera(capture)) {
+                    publish(new FrameUpdate(null, EmotionAnalyzer.Expression.NEUTRAL,
+                            "Could not open camera. Check that it is connected and available.", false));
+                    return null;
+                }
+                if (capture.read(frame) && !frame.empty()) {
+                    publish(new FrameUpdate(toBufferedImage(frame), EmotionAnalyzer.Expression.NEUTRAL,
+                            "Camera connected; loading expression model...", true));
+                }
+
+                try (EmotionAnalyzer analyzer = new EmotionAnalyzer(MODEL_PATH, CASCADE_PATH)) {
                     publish(new FrameUpdate(null, EmotionAnalyzer.Expression.NEUTRAL, "Camera is live", true));
                     while (!isCancelled()) {
                         if (!capture.read(frame) || frame.empty()) {
@@ -182,12 +188,22 @@ public final class SmileyApp extends JFrame {
                             ? analysis.detail() : "Detected: " + analysis.detail();
                         publish(new FrameUpdate(toBufferedImage(frame), analysis.expression(), status, true));
                     }
-                } finally {
-                    frame.release();
-                    capture.release();
                 }
+            } finally {
+                frame.release();
+                capture.release();
             }
             return null;
+        }
+
+        private boolean openCamera(VideoCapture capture) {
+            if (System.getProperty("os.name", "").toLowerCase(java.util.Locale.ROOT).contains("win")) {
+                if (capture.open(0, Videoio.CAP_DSHOW)) {
+                    return true;
+                }
+                capture.release();
+            }
+            return capture.open(0);
         }
 
         @Override
@@ -197,7 +213,7 @@ public final class SmileyApp extends JFrame {
                 boolean isSad = update.expression() == EmotionAnalyzer.Expression.SAD;
                 long now = System.nanoTime();
                 boolean becameExpressive = (isHappy && !wasHappy) || (isSad && !wasSad);
-                if (becameExpressive && now - lastExpressionSoundNanos > 1_500_000_000L) {
+                if (becameExpressive && now - lastExpressionSoundNanos > 3_000_000_000L) {
                     if (isHappy) {
                         CheerSound.play();
                     } else {

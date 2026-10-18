@@ -27,7 +27,9 @@ mvn exec:java
 
 Click **Start camera** to begin. Use **Stop** to release the webcam. If the camera does not open, check operating-system camera permissions and close any other app using it.
 
-When the detected expression changes to happy or sad, Smiley plays a short cheerful or wavering crying cue. Sounds are synthesized locally and are not saved.
+When the detected expression changes to happy or sad, Smiley plays a short excerpt from a real crowd cheer or crying recording. Clips are bundled locally and are not streamed.
+
+Audio credits: “Football Crowd” by GoGo and “Crying” by Mike Koenig, licensed under Creative Commons Attribution 3.0. [Football crowd source](https://soundbible.com/1882-Football-Crowd.html), [crying source](https://soundbible.com/818-Crying.html), [CC BY 3.0 license](https://creativecommons.org/licenses/by/3.0/).
 
 ## Build
 

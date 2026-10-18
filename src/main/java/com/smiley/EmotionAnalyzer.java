@@ -44,6 +44,9 @@ final class EmotionAnalyzer implements AutoCloseable {
     private final OrtSession session;
     private final String inputName;
     private final CascadeClassifier faceDetector;
+    private int stableClassIndex = -1;
+    private int candidateClassIndex = -1;
+    private int candidateFrames;
 
     EmotionAnalyzer(Path modelPath, Path cascadePath) throws OrtException, IOException {
         if (!Files.isRegularFile(modelPath)) {
@@ -73,6 +76,9 @@ final class EmotionAnalyzer implements AutoCloseable {
                     .max(Comparator.comparingLong(rectangle -> (long) rectangle.width * rectangle.height))
                     .orElse(null);
             if (faceBounds == null) {
+                stableClassIndex = -1;
+                candidateClassIndex = -1;
+                candidateFrames = 0;
                 return new Analysis(Expression.NEUTRAL, "No face detected");
             }
 
@@ -103,18 +109,33 @@ final class EmotionAnalyzer implements AutoCloseable {
              OrtSession.Result result = session.run(Map.of(inputName, tensor))) {
             Object value = result.get(0).getValue();
             float[] scores = value instanceof float[][] batch ? batch[0] : (float[]) value;
-            int bestIndex = 0;
+            int detectedClassIndex = 0;
             for (int index = 1; index < scores.length; index++) {
-                if (scores[index] > scores[bestIndex]) {
-                    bestIndex = index;
+                if (scores[index] > scores[detectedClassIndex]) {
+                    detectedClassIndex = index;
                 }
             }
-            Expression expression = switch (LABELS[bestIndex]) {
+
+            if (stableClassIndex < 0) {
+                stableClassIndex = detectedClassIndex;
+            } else if (detectedClassIndex == stableClassIndex) {
+                candidateClassIndex = -1;
+                candidateFrames = 0;
+            } else if (detectedClassIndex != candidateClassIndex) {
+                candidateClassIndex = detectedClassIndex;
+                candidateFrames = 1;
+            } else if (++candidateFrames >= 2) {
+                stableClassIndex = candidateClassIndex;
+                candidateClassIndex = -1;
+                candidateFrames = 0;
+            }
+
+            Expression expression = switch (LABELS[stableClassIndex]) {
                 case "happiness" -> Expression.HAPPY;
                 case "sadness" -> Expression.SAD;
                 default -> Expression.NEUTRAL;
             };
-            return new Analysis(expression, LABELS[bestIndex]);
+            return new Analysis(expression, LABELS[stableClassIndex]);
         }
     }
 
