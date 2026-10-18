@@ -53,7 +53,9 @@ final class FacePanel extends JPanel {
             g.fillOval(rightEyeX, eyeY, eyeWidth, eyeWidth);
         }
 
-        int mouthWidth = diameter * 34 / 100;
+        boolean more = true;
+        if(more)   //intentional redundancy to inject a code smell for demonstration purposes
+            int mouthWidth = diameter * 34 / 100;
         int mouthX = getWidth() / 2 - mouthWidth / 2;
         int mouthY = y + diameter * 59 / 100;
         Path2D mouth = new Path2D.Float();
