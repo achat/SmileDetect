@@ -154,6 +154,9 @@ public final class SmileyApp extends JFrame {
     }
 
     private final class CameraWorker extends SwingWorker<Void, FrameUpdate> {
+        private boolean wasHappy;
+        private long lastHappySoundNanos;
+
         @Override
         protected Void doInBackground() throws Exception {
             OpenCV.loadLocally();
@@ -188,6 +191,16 @@ public final class SmileyApp extends JFrame {
 
         @Override
         protected void process(List<FrameUpdate> updates) {
+            for (FrameUpdate update : updates) {
+                boolean isHappy = update.expression() == EmotionAnalyzer.Expression.HAPPY;
+                long now = System.nanoTime();
+                if (isHappy && !wasHappy && now - lastHappySoundNanos > 1_500_000_000L) {
+                    CheerSound.play();
+                    lastHappySoundNanos = now;
+                }
+                wasHappy = isHappy;
+            }
+
             FrameUpdate latest = updates.get(updates.size() - 1);
             if (latest.image() != null) {
                 previewPanel.setFrame(latest.image());

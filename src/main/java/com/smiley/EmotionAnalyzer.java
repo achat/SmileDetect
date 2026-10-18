@@ -84,7 +84,7 @@ final class EmotionAnalyzer implements AutoCloseable {
                 resized.get(0, 0, pixels);
                 float[] input = new float[pixels.length];
                 for (int index = 0; index < pixels.length; index++) {
-                    input[index] = (pixels[index] & 0xff) / 255.0f;
+                    input[index] = pixels[index] & 0xff;
                 }
                 return classify(input);
             } finally {

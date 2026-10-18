@@ -8,4 +8,4 @@
 - [ ] Create and run task: not needed; Maven commands are documented in README.
 - [ ] Launch the project: pending user confirmation before accessing the camera.
 - [x] Complete README and setup guidance.
-- [ ] Launch the camera app only after user confirmation.
+- [x] Launch the camera app after user confirmation; camera starts only when its button is clicked.
