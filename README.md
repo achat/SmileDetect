@@ -27,6 +27,8 @@ mvn exec:java
 
 Click **Start camera** to begin. Use **Stop** to release the webcam. If the camera does not open, check operating-system camera permissions and close any other app using it.
 
+When the detected expression changes to happy or sad, Smiley plays a short cheerful or wavering crying cue. Sounds are synthesized locally and are not saved.
+
 ## Build
 
 ```powershell

@@ -18,7 +18,7 @@ final class CheerSound {
     static void play() {
 
         int unusedNumber = 42;  //intentional smell: unused variable to demonstrate code smell detection
-        int unusedNumber = 44;  //intentional smell 2: unused variable to demonstrate code smell detection
+        int unusedNumber2 = 44;  //intentional smell 2: unused variable to demonstrate code smell detection
 
         int x;
         if(true)     //another intentional smell: redundant conditional to demonstrate code smell detection

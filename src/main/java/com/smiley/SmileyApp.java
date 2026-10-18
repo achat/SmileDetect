@@ -155,7 +155,8 @@ public final class SmileyApp extends JFrame {
 
     private final class CameraWorker extends SwingWorker<Void, FrameUpdate> {
         private boolean wasHappy;
-        private long lastHappySoundNanos;
+        private boolean wasSad;
+        private long lastExpressionSoundNanos;
 
         @Override
         protected Void doInBackground() throws Exception {
@@ -193,12 +194,19 @@ public final class SmileyApp extends JFrame {
         protected void process(List<FrameUpdate> updates) {
             for (FrameUpdate update : updates) {
                 boolean isHappy = update.expression() == EmotionAnalyzer.Expression.HAPPY;
+                boolean isSad = update.expression() == EmotionAnalyzer.Expression.SAD;
                 long now = System.nanoTime();
-                if (isHappy && !wasHappy && now - lastHappySoundNanos > 1_500_000_000L) {
-                    CheerSound.play();
-                    lastHappySoundNanos = now;
+                boolean becameExpressive = (isHappy && !wasHappy) || (isSad && !wasSad);
+                if (becameExpressive && now - lastExpressionSoundNanos > 1_500_000_000L) {
+                    if (isHappy) {
+                        CheerSound.play();
+                    } else {
+                        SadSound.play();
+                    }
+                    lastExpressionSoundNanos = now;
                 }
                 wasHappy = isHappy;
+                wasSad = isSad;
             }
 
             FrameUpdate latest = updates.get(updates.size() - 1);
