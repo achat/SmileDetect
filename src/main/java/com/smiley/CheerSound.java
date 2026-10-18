@@ -18,6 +18,7 @@ final class CheerSound {
     static void play() {
 
         int unusedNumber = 42;  //intentional smell: unused variable to demonstrate code smell detection
+        int unusedNumber = 44;  //intentional smell 2: unused variable to demonstrate code smell detection
 
         Thread playback = new Thread(CheerSound::playNotes, "smiley-cheer-sound");
         playback.setDaemon(true);
