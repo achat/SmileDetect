@@ -154,6 +154,7 @@ public final class SmileyApp extends JFrame {
         statusLabel.setText("Camera is off");
     }
 
+    //cameraWorker is a SwingWorker that captures frames from the camera, analyzes them for facial expressions, and updates the UI accordingly. It also plays sounds when the user smiles or frowns.
     private final class CameraWorker extends SwingWorker<Void, FrameUpdate> {
         private boolean wasHappy;
         private boolean wasSad;
