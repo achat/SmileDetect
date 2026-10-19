@@ -18,6 +18,7 @@ final class FacePanel extends JPanel {
         setPreferredSize(new Dimension(320, 330));
     }
 
+    // Sets the current expression to be displayed on the face panel and repaints the panel to reflect the change.
     void setExpression(EmotionAnalyzer.Expression expression) {
         this.expression = expression;
         repaint();
