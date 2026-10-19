@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Map;
 
+
 final class EmotionAnalyzer implements AutoCloseable {
     enum Expression {
         NEUTRAL("Neutral"), HAPPY("Happy"), SAD("Sad");
@@ -36,6 +37,7 @@ final class EmotionAnalyzer implements AutoCloseable {
 
     record Analysis(Expression expression, String detail) { }
 
+    //emotion labels are based on the FER-2013 dataset, which is a widely used dataset for facial expression recognition. The labels correspond to the following emotions: neutral, happiness, surprise, sadness, anger, disgust, fear, and contempt. The model used in this application is trained to recognize these emotions from facial images.
     private static final String[] LABELS = {
             "neutral", "happiness", "surprise", "sadness",
             "anger", "disgust", "fear", "contempt"
