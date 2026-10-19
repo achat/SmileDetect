@@ -144,6 +144,7 @@ public final class SmileyApp extends JFrame {
         cameraWorker.execute();
     }
 
+    // Stops the camera and cancels the camera worker if it is running. Updates the UI to reflect that the camera is off.
     private void stopCamera() {
         if (cameraWorker != null) {
             cameraWorker.cancel(true);
