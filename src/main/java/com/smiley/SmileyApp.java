@@ -196,6 +196,7 @@ public final class SmileyApp extends JFrame {
             return null;
         }
 
+        // OpenCV on Windows can fail to open the camera if the DirectShow backend is not used, so try that first.
         private boolean openCamera(VideoCapture capture) {
             if (System.getProperty("os.name", "").toLowerCase(java.util.Locale.ROOT).contains("win")) {
                 if (capture.open(0, Videoio.CAP_DSHOW)) {
