@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Map;
 
+//Emotion analysis is based on the ONNX model "ferplus-8.onnx" from the Microsoft ONNX Model Zoo:
 final class EmotionAnalyzer implements AutoCloseable {
     enum Expression {
         NEUTRAL("Neutral"), HAPPY("Happy"), SAD("Sad");
